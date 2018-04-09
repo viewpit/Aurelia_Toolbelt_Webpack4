@@ -1,16 +1,20 @@
+//import 'isomorphic-fetch';
 import environment from './environment';
 import { PLATFORM } from 'aurelia-pal';
 import 'babel-polyfill';
+//import { Aurelia, PLATFORM } from 'aurelia-framework';
+//import { HttpClient } from 'aurelia-fetch-client';
+import 'bootstrap/dist/css/bootstrap.css';
+import 'bootstrap/dist/js/bootstrap.bundle.js';
 
 export async function configure(aurelia) {
 
   aurelia.use
     .standardConfiguration()
-    .feature(PLATFORM.moduleName('resources/index'));
+    .feature(PLATFORM.moduleName('resources/index'))
 
-  // Install and configure the plugin
-  //aurelia.use(PLATFORM.moduleName('aurelia-toolbelt'));
-  //.plugin(PLATFORM.moduleName('aurelia-toolbelt'));
+    // Install and configure the plugin
+    .plugin(PLATFORM.moduleName('aurelia-toolbelt'));
 
   // Uncomment the line below to enable animation.
   // aurelia.use.plugin(PLATFORM.moduleName('aurelia-animator-css'));
