@@ -1,26 +1,46 @@
 <template>  
   <require from="bootstrap/dist/css/bootstrap.min.css"></require>
+  <require from="toastr/build/toastr.css"></require>
+  <require from="font-awesome/css/font-awesome.css"></require>
+  <!--<require from="toastr/nuget/content/content/toastr.css"></require>-->
+  
+  <!--import "toastr/build/toastr.css";
+  import "font-awesome/css/font-awesome.css";-->
+
   
   <div class="container-fluid">
     
     <div class="card text-center mt-3">
-      <div class="card-header">
-        Aurelia Test
-      </div>
       <div class="card-body">
+        <aut-clock></aut-clock>
+        
+        <aut-divider>using</aut-divider>
+
         <blockquote class="blockquote mb-0">
-          <p>Aurelia (CLI 0.33.1) .NET Core 2.1, WebPack 4.0, Bootstrap 4.0.0, Aurelia-Toolbelt 0.9.4-alpha, Sass and Babel</p>
-          <footer class="blockquote-footer">Important: <cite title="Source Title">Aurelia-Toolbelt do NOT work yet!</cite></footer>
+          <ul class="list-unstyled">
+            <li>Aurelia (CLI 0.33.1)</li>
+            <li>.NET Core 2.1</li>
+            <li>WebPack 4</li>
+            <li>Bootstrap 4</li>
+            <li>Aurelia-Toolbelt 0.9.2-alpha</li>
+            <li>Sass</li>
+            <li>Babel</li>
+          </ul>            
+          <footer class="blockquote-footer"><cite title="Source Title">Webpack 4 and Aurelia-Toolbelt</cite></footer>
         </blockquote>
-      </div>
-      <div class="card-footer text-muted">
-        Date 4/9/2018
-      </div>
-    </div>
+        
+        <aut-divider>rate us</aut-divider>
+      
+        <div class="fa-2x text-center">
+          <abt-star-rate rate-changed.call="alertMessage()"></abt-star-rate>
+        </div>       
+
+      </div>      
+    </div>  
     
     <br/>
     
-    <p class="font-weight-bold">Test Aurelia-Toobelt - Collapse:</p>
+    <div class="font-weight-bold text-center">Test collapse:</div>
     
     <abt-accordion>
       <abt-accordion-item title="first">

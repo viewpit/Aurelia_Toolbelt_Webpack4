@@ -1,11 +1,16 @@
+/// <reference types="aurelia-loader-webpack/src/webpack-hot-interface"/>
 //import 'isomorphic-fetch';
 import environment from './environment';
 import { PLATFORM } from 'aurelia-pal';
 import 'babel-polyfill';
 //import { Aurelia, PLATFORM } from 'aurelia-framework';
 //import { HttpClient } from 'aurelia-fetch-client';
-import 'bootstrap/dist/css/bootstrap.css';
-import 'bootstrap/dist/js/bootstrap.bundle.js';
+//import 'bootstrap/dist/css/bootstrap.css';
+//import 'bootstrap/dist/js/bootstrap.bundle.js';
+
+import 'bootstrap';
+//import 'bootstrap/dist/css/bootstrap.css';
+//import 'toastr/nuget/content/content/toastr.css';
 
 export async function configure(aurelia) {
 

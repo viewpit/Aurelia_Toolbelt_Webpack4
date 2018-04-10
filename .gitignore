@@ -34,3 +34,4 @@ scripts
 /wwwroot/dist
 /wwwroot/favicon.ico
 /.vs
+/bin/Release/netcoreapp2.0
