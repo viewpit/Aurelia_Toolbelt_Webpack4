@@ -1,6 +1,12 @@
 # Aurelia_Toolbelt_Webpack4
 Aurelia (CLI 0.33.1) .NET Core 2.1, WebPack 4.0, Bootstrap 4.0.0, Aurelia-Toolbelt 0.9.4-alpha, Sass and Babel (does NOT work yet)
 
+# How to quick start the project
+1. ```npm install```
+2. ```dotnet restore```
+3. ```au build```
+4. ```dotnet run```
+
 
 ### Setting Up Your Machine
 
