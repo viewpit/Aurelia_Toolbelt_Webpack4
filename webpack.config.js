@@ -3,9 +3,17 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const project = require('./aurelia_project/aurelia.json');
-const { AureliaPlugin, ModuleDependenciesPlugin } = require('aurelia-webpack-plugin');
-const { ProvidePlugin } = require('webpack');
-const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
+var webpack = require('webpack');
+const {
+  AureliaPlugin,
+  ModuleDependenciesPlugin
+} = require('aurelia-webpack-plugin');
+const {
+  ProvidePlugin
+} = require('webpack');
+const {
+  BundleAnalyzerPlugin
+} = require('webpack-bundle-analyzer');
 
 // config helpers:
 const ensureArray = (config) => config && (Array.isArray(config) ? config : [config]) || [];
@@ -19,18 +27,25 @@ const srcDir = path.resolve(__dirname, 'src');
 const nodeModulesDir = path.resolve(__dirname, 'node_modules');
 const baseUrl = '/';
 
-const cssRules = [
-  { loader: 'css-loader' },
-];
+const cssRules = [{
+  loader: 'css-loader'
+}, ];
 
-module.exports = ({production, server, extractCss, coverage, analyze} = {}) => ({
+module.exports = ({
+  production,
+  server,
+  extractCss,
+  coverage,
+  analyze
+} = {}) => ({
   resolve: {
-    extensions: ['.js'],
+    extensions: ['.ts', '.js'],
     modules: [srcDir, 'node_modules'],
   },
   entry: {
     app: ['aurelia-bootstrapper'],
-    //vendor: [],
+    vendor: ['bluebird']
+     , 'aurelia-toolbelt' : 'aurelia-toolbelt'
   },
   mode: production ? 'production' : 'development',
   output: {
@@ -40,7 +55,9 @@ module.exports = ({production, server, extractCss, coverage, analyze} = {}) => (
     sourceMapFilename: production ? '[name].[chunkhash].bundle.map' : '[name].[hash].bundle.map',
     chunkFilename: production ? '[name].[chunkhash].chunk.js' : '[name].[hash].chunk.js'
   },
-  performance: { hints: false },
+  performance: {
+    hints: false
+  },
   devServer: {
     contentBase: outDir,
     // serve index.html for all 404 (required for push-state)
@@ -53,7 +70,11 @@ module.exports = ({production, server, extractCss, coverage, analyze} = {}) => (
       // only when the issuer is a .js/.ts file, so the loaders are not applied inside html templates
       {
         test: /\.css$/i,
-        issuer: [{ not: [{ test: /\.html$/i }] }],
+        issuer: [{
+          not: [{
+            test: /\.html$/i
+          }]
+        }],
         use: extractCss ? ExtractTextPlugin.extract({
           fallback: 'style-loader',
           use: cssRules
@@ -61,7 +82,9 @@ module.exports = ({production, server, extractCss, coverage, analyze} = {}) => (
       },
       {
         test: /\.css$/i,
-        issuer: [{ test: /\.html$/i }],
+        issuer: [{
+          test: /\.html$/i
+        }],
         // CSS required in templates cannot be extracted safely
         // because Aurelia would try to require it again in runtime
         use: cssRules
@@ -76,34 +99,77 @@ module.exports = ({production, server, extractCss, coverage, analyze} = {}) => (
         use: ['css-loader', 'sass-loader'],
         issuer: /\.html?$/i
       },
-      { test: /\.html$/i, loader: 'html-loader' },
-      { test: /\.js$/i, loader: 'babel-loader', exclude: nodeModulesDir,
-        options: coverage ? { sourceMap: 'inline', plugins: [ 'istanbul' ] } : {},
+      {
+        test: /\.html$/i,
+        loader: 'html-loader'
       },
-      { test: /\.json$/i, loader: 'json-loader' },
+      {
+        test: /\.tsx?$/,
+        loader: "ts-loader"
+      },
+
+      // { test: /\.json$/i, loader: 'json-loader' },
+
+
       // use Bluebird as the global Promise implementation:
-      //{ test: /[\/\\]node_modules[\/\\]bluebird[\/\\].+\.js$/, loader: 'expose-loader?Promise' },
+      {
+        test: /[\/\\]node_modules[\/\\]bluebird[\/\\].+\.js$/,
+        loader: 'expose-loader?Promise'
+      },
+      
+      { test: /[\/\\]node_modules[\/\\]jquery[\/\\].+\.js$/, loader: 'expose-loader?$!expose-loader?jQuery' },
       // embed small images and fonts as Data Urls and larger ones as files:
-      { test: /\.(png|gif|jpg|cur)$/i, loader: 'url-loader', options: { limit: 8192 } },
-      { test: /\.woff2(\?v=[0-9]\.[0-9]\.[0-9])?$/i, loader: 'url-loader', options: { limit: 10000, mimetype: 'application/font-woff2' } },
-      { test: /\.woff(\?v=[0-9]\.[0-9]\.[0-9])?$/i, loader: 'url-loader', options: { limit: 10000, mimetype: 'application/font-woff' } },
+      {
+        test: /\.(png|gif|jpg|cur)$/i,
+        loader: 'url-loader',
+        options: {
+          limit: 8192
+        }
+      },
+      {
+        test: /\.woff2(\?v=[0-9]\.[0-9]\.[0-9])?$/i,
+        loader: 'url-loader',
+        options: {
+          limit: 10000,
+          mimetype: 'application/font-woff2'
+        }
+      },
+      {
+        test: /\.woff(\?v=[0-9]\.[0-9]\.[0-9])?$/i,
+        loader: 'url-loader',
+        options: {
+          limit: 10000,
+          mimetype: 'application/font-woff'
+        }
+      },
       // load these fonts normally, as files:
-      { test: /\.(ttf|eot|svg|otf)(\?v=[0-9]\.[0-9]\.[0-9])?$/i, loader: 'file-loader' },
+      {
+        test: /\.(ttf|eot|svg|otf)(\?v=[0-9]\.[0-9]\.[0-9])?$/i,
+        loader: 'file-loader'
+      },
+      ...when(coverage, {
+        test: /\.[jt]s$/i,
+        loader: 'istanbul-instrumenter-loader',
+        include: srcDir,
+        exclude: [/\.{spec,test}\.[jt]s$/i],
+        enforce: 'post',
+        options: {
+          esModules: true
+        },
+      })
     ]
   },
   plugins: [
     new AureliaPlugin(),
-    // new ProvidePlugin({
-    //   'Promise': 'bluebird'
-    // }),
     new ProvidePlugin({
-      '$': 'jquery',
+      'Promise': 'bluebird',
       'jQuery': 'jquery',
-      'window.jQuery': 'jquery',
+      '$': 'jquery'
     }),
     new ModuleDependenciesPlugin({
-      'aurelia-testing': [ './compile-spy', './view-spy' ]
+      'aurelia-testing': ['./compile-spy', './view-spy']
     }),
+    new webpack.optimize.SplitChunksPlugin(),
     new HtmlWebpackPlugin({
       template: 'index.ejs',
       minify: production ? {
@@ -120,15 +186,19 @@ module.exports = ({production, server, extractCss, coverage, analyze} = {}) => (
       } : undefined,
       metadata: {
         // available in index.ejs //
-        title, server, baseUrl
+        title,
+        server,
+        baseUrl
       }
     }),
     ...when(extractCss, new ExtractTextPlugin({
       filename: production ? '[contenthash].css' : '[id].css',
       allChunks: true
     })),
-    ...when(production, new CopyWebpackPlugin([
-      { from: 'static/favicon.ico', to: 'favicon.ico' }])),
+    ...when(production, new CopyWebpackPlugin([{
+      from: 'static/favicon.ico',
+      to: 'favicon.ico'
+    }])),
     ...when(analyze, new BundleAnalyzerPlugin())
   ]
 });
